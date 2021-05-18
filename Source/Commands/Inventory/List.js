@@ -34,7 +34,7 @@ module.exports.run = async(bot, message, args) => {
         const msg = await message.channel.send(embed);
         await msg.react('⬅'); await msg.react('➡');
         const filter = (reaction, user) => user.id === user.id && (reaction.emoji.name === '⬅' || reaction.emoji.name === '➡');
-        const collector = msg.createReactionCollector(filter);
+        const collector = msg.createReactionCollector(filter, { time: 300000 });
         
         collector.on('collect', async(reaction, user) => {
             if(reaction.emoji.name === '⬅') { 

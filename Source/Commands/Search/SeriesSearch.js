@@ -5,8 +5,9 @@ module.exports.run = async(bot, message, args) => {
     const Model = mongoose.model('Characters');
     const Name = args.join(' ').toLowerCase();
     const Series = await Model.find({ series: Name }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
+    const SeriesName = await Model.findOne({ series: Name }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
     const CharPerPage = 20;
-    const CharacterList = Series.map((Character) => `**${Character.name}** - [${Character.owner}]`)
+    const CharacterList = Series.map((Character) => `**${Character.name}** - [<@${Character.owner}>]`)
 
     if(CharacterList.length === 0) {
         const embed = new MessageEmbed()
@@ -17,7 +18,7 @@ module.exports.run = async(bot, message, args) => {
     if(CharacterList.length <= CharPerPage) {
         const embed = new MessageEmbed()
             .setColor("2f3136")
-            .setTitle(Name)
+            .setTitle(SeriesName.series)
             .setDescription(CharacterList.join('\n'))
             .setFooter(`Page 1/1 [${CharacterList.length} Characters]`)
         return message.channel.send(embed)
