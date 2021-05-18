@@ -14,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
     if(!args.length) {
         const embed = new MessageEmbed()
             .setTitle(Roll[0].name)
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setURL(Roll[0].charURL)
             .setDescription(`**Series**: ${Roll[0].series}`) 
             .setImage(Roll[0].image)

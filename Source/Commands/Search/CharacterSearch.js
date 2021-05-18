@@ -8,13 +8,13 @@ module.exports.run = async(bot, message, args) => {
 
     if(!Character) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 There is no character named \`${Name}\`!`)
         return message.channel.send(embed)
     }
     else {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(Character.name)
             .setURL(Character.charURL)
             .setDescription(`**Series**: ${Character.series}\n**Gender**: ${Character.gender}`)

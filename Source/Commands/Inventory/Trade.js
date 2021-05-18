@@ -87,6 +87,7 @@ module.exports.run = async(bot, message, args) => {
                                 else {
                                     MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: member.id, name: Char.name }, { $set: { owner: wewber.id }}))
                                     WCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: wewber.id, name: Char.name }, { $set: { owner: member.id }}))
+                                    
                                     console.log(chalk.green(`${chalk.bold(member.user.username)} traded ${chalk.bold(MCharacterGive)} to ${chalk.bold(wewber.user.username)}`))
                                     console.log(chalk.green(`${chalk.bold(wewber.user.username)} traded ${chalk.bold(WCharacterGive)} to ${chalk.bold(member.user.username)}`))
                                     return message.edit(embed.setFooter(`Trade Completed!`))

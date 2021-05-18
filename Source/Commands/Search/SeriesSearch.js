@@ -11,13 +11,13 @@ module.exports.run = async(bot, message, args) => {
 
     if(CharacterList.length === 0) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 There is no series called \`${Name}\`!`)
         return message.channel.send(embed)
     }
     if(CharacterList.length <= CharPerPage) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(SeriesName.series)
             .setDescription(CharacterList.join('\n'))
             .setFooter(`Page 1/1 [${CharacterList.length} Characters]`)
@@ -26,7 +26,7 @@ module.exports.run = async(bot, message, args) => {
     else {
         let page = 0;
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(Name)
             .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
             .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
@@ -49,7 +49,7 @@ module.exports.run = async(bot, message, args) => {
             else if(page > Math.floor(CharacterList.length/CharPerPage)) { page = 0 }
         
             const newEmbed = new MessageEmbed()
-                .setColor("2f3136")
+                .setColor('2f3136')
                 .setTitle(Name)
                 .setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
                 .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)

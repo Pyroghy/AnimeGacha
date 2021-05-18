@@ -14,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
     if(!args.length) {
         const embed = new MessageEmbed()
             .setTitle(Husbando[0].name)
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setURL(Husbando[0].charURL)
             .setDescription(`**Series**: ${Husbando[0].series}`) 
             .setImage(Husbando[0].image)

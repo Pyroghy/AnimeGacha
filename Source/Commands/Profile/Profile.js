@@ -14,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
 
     if(!User) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`${member.user.username}'s Profile`)
             .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
             .setThumbnail(member.user.avatarURL())
@@ -22,7 +22,7 @@ module.exports.run = async(bot, message, args) => {
     }
     if(!Check) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`${User.username}'s Profile`)
             .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
             .setThumbnail(member.user.avatarURL())
@@ -30,7 +30,7 @@ module.exports.run = async(bot, message, args) => {
     }
     if(User) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`${User.username}'s Profile`)
             .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
             .setThumbnail(User.image)

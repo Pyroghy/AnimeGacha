@@ -16,7 +16,7 @@ module.exports.run = async(bot, message, args) => {
     }
     if(CharacterList.length <= CharPerPage) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`${member.user.username}'s claimed characters`)
             .setDescription(CharacterList.join('\n'))
             .setThumbnail(User.image)
@@ -26,7 +26,7 @@ module.exports.run = async(bot, message, args) => {
     else {
         let page = 0;
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`${member.user.username}'s claimed characters`)
             .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
             .setThumbnail(User.image)
@@ -50,7 +50,7 @@ module.exports.run = async(bot, message, args) => {
             else if(page > Math.floor(CharacterList.length/CharPerPage)) { page = 0 }
         
             const newEmbed = new MessageEmbed()
-                .setColor("2f3136")
+                .setColor('2f3136')
                 .setTitle(`${member.user.username}'s claimed characters`)
                 .setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
                 .setThumbnail(User.image)

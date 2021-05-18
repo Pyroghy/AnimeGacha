@@ -11,19 +11,19 @@ module.exports.run = async(bot, message, args) => {
 
     if(!exists) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 There is no character named \`${Name}\`!`)
         return message.channel.send(embed)
     }
     if(!Character) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 You dont own \`${Name}\`!`)
         return message.channel.send(embed)
     }
     else {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setAuthor(`Are you sure you want to unclaim ${Character.name}?`, Character.image, Character.charURL)
             .setFooter(`React with 🗑️ to unclaim | React with ❌ to cancel`)
         message.channel.send(embed).then(message => {

@@ -14,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
     if(!args.length) {
         const embed = new MessageEmbed()
             .setTitle(Waifu[0].name)
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setURL(Waifu[0].charURL)
             .setDescription(`**Series**: ${Waifu[0].series}`) 
             .setImage(Waifu[0].image)

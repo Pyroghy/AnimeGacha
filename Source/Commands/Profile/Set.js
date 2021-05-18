@@ -14,19 +14,19 @@ module.exports.run = async(bot, message, args) => {
     }
     if(!exists) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 There is no character named \`${Name}\`!`)
         return message.channel.send(embed)
     }
     if(!Character) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`🔍 You dont own \`${Name}\`!`)
         return message.channel.send(embed)
     }
     if(User.image === Character.image) {
         const embed = new MessageEmbed()
-            .setColor("2f3136")
+            .setColor('2f3136')
             .setTitle(`\`${Character.name}\` is already set to your profile!`)
         return message.channel.send(embed)
     }
@@ -35,7 +35,7 @@ module.exports.run = async(bot, message, args) => {
 
         if(Update) {
             const embed = new MessageEmbed()
-                .setColor("2f3136")
+                .setColor('2f3136')
                 .setAuthor(`${Character.name} has been set to your profile!`, Character.image)
             return message.channel.send(embed)
         } else {
