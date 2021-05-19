@@ -1,9 +1,10 @@
 # AnimeGacha
 
 How To Start Bot:
-1. npm install
-2. rename .env.example to .env and enter in your data
-3. start the bot with 'node .' or node 'index.js'
+1. download bots source code
+2. npm install
+3. rename .env.example to .env and enter in your data
+4. start the bot with 'node .' or node 'index.js'
 
 This project will continue to be updated with new features as time goes on
 
