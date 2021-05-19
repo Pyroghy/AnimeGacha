@@ -33,11 +33,14 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`🔍 You specified a character that you dont own!`)
         return message.channel.send(embed)
     }
-    else {
+    else {        
+        const CharacterList = Character.map((Character) => `${Character.name}`)
+        const CharacterGift = CharacterList.join(', ').replace(/, ([^,]*)$/, '\` and \`$1');
+
         Character.forEach(async(Char) => await CharacterModel.updateMany({ owner: message.member.id, name: Char.name }, { $set: { owner: member.id }}))
 
-        message.channel.send(`You have gifted \`${Character}\` to **${member.user.username}**`)
-        console.log(chalk.green(`${chalk.bold(message.member.user.username)} gifted ${chalk.bold(member.user.username)} the character ${chalk.bold(Character)}`))
+        message.channel.send(`You have gifted \`${CharacterGift}\` to **${member.user.username}**`)
+        console.log(chalk.green(`${chalk.bold(message.member.user.username)} gifted ${chalk.bold(member.user.username)} the character(s) ${chalk.bold(CharacterGift).replaceAll('`', '')}`))
     }
 };
 

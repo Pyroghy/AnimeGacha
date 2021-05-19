@@ -24,7 +24,7 @@ module.exports.run = async(bot, message, args) => {
             const collector = message.createReactionCollector(filter, { max: 1, time: 30000});
 
             collector.on('collect', async(reaction, user) => {
-                const cooldown = used.get(message.author.id);
+                const cooldown = used.get(user.id);
                 
                 if(cooldown) {
                     const remaining = Duration(cooldown - Date.now());
@@ -41,9 +41,9 @@ module.exports.run = async(bot, message, args) => {
                         message.channel.send(`There was a problem with claiming **${Husbando[0].name}**`)
                     }
                     collector.stop(); reaction.users.remove(user);
-                    used.set(message.author.id, Date.now() + 5000);
+                    used.set(user.id, Date.now() + 5000);
                 }
-                setTimeout(() => used.delete(message.author.id), 5000);
+                setTimeout(() => used.delete(user.id), 5000);
             });
             collector.on('end', (collected, reason) => {
                 if(reason === 'time') {
