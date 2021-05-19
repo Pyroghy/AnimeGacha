@@ -1,0 +1,9 @@
+{
+    "owner": "null",
+    "name": "name",
+    "charURL": "url",
+    "gender": "gender",
+    "series": "series",
+    "image": "image",
+    "type": "media type (ANIME, MANGA, CUSTOM)"
+}

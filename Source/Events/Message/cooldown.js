@@ -1,3 +1,3 @@
-const used = new Set()
+const used = new Map();
 
 module.exports = { used }
