@@ -8,3 +8,5 @@ How To Start Bot:
 To create character models to use with the bot I recommend using [this api](https://anilist.gitbook.io/anilist-apiv2-docs/)
 
 **Character Model Format**: { "owner": "null", "name": "name", "charURL": "charURL", "gender": "gender", "series": "series", "image": "image" }
+
+*I will also be releasing a character generator in the future*
