@@ -6,9 +6,11 @@ module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const member = message.member;
     const wewber = message.mentions.members.first();
-    const MemberGive = args.slice(1).join(' ').toLowerCase().split(', ');
+    const MemberGive = args.slice(1).join(' ').split(', ');
     const MCharacterGive = await CharacterModel.find({ owner: member.id, name: MemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-    const exists = await CharacterModel.find({ name: MemberGive }).collation({ locale: 'en', strength: 2 });
+    const MCharacterList = MCharacterGive.map((Character) => Character.name);
+    const MExists = await CharacterModel.find({ name: MemberGive }).collation({ locale: 'en', strength: 2 });
+    const MExistsList = MExists.map((Character) => Character.name);
 
     if(!wewber) {
         const embed = new MessageEmbed()
@@ -22,13 +24,13 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You cannot gift characrers to bots!`)
         return message.channel.send(embed)
     }
-    if(!exists) {
+    if(MemberGive.length !== MExistsList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`🔍 You specified an invalid character!`)
+            .setTitle(`🔍 You specified a character that doesnt exist!`)
         return message.channel.send(embed)
     }
-    if(!MCharacterGive) {
+    if(MemberGive.length !== MCharacterList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that you dont own!`)
@@ -45,17 +47,19 @@ module.exports.run = async(bot, message, args) => {
                 if(message.member.id === wewber.id) {
                     const argz = message.content.slice(1).trim().split(' ');
                     if(message.content.startsWith('-t')) {
-                        const WewberGive = argz.slice(1).join(' ').toLowerCase().split(', ');
+                        const WewberGive = argz.slice(1).join(' ').split(', ');
                         const WCharacterGive = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-                        const exists = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 });
+                        const WCharacterList = WCharacterGive.map((Character) => Character.name);
+                        const WExists = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 });
+                        const WExistsList = WExists.map((Character) => Character.name);
 
-                        if(!exists) {
+                        if(WewberGive.length !== WExistsList.length) {
                             const embed = new MessageEmbed()
                                 .setColor('2f3136')
-                                .setTitle(`🔍 You specified an invalid character!`)
+                                .setTitle(`🔍 You specified a character that doesnt exist!`)
                             return message.channel.send(embed)
                         }
-                        if(!WCharacterGive) {
+                        if(WewberGive.length !== WCharacterList.length) {
                             const embed = new MessageEmbed()
                                 .setColor('2f3136')
                                 .setTitle(`🔍 You specified a character that you dont own!`)

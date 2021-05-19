@@ -5,9 +5,11 @@ const chalk = require('chalk');
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const member = message.mentions.members.first();
-    const Name = args.slice(1).join(' ').toLowerCase().split(', ');
+    const Name = args.slice(1).join(' ').split(', ');
     const Character = await CharacterModel.find({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
+    const CharacterList = Character.map((Character) => Character.name);
     const exists = await CharacterModel.find({ name: Name }).collation({ locale: 'en', strength: 2 });
+    const ExistsList = exists.map((Character) => Character.name);
 
     if(!member) {
         const embed = new MessageEmbed()
@@ -18,16 +20,16 @@ module.exports.run = async(bot, message, args) => {
     if(member.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`You cannot gift characrers to bots!`)
+            .setTitle(`You cannot gift characters to bots!`)
         return message.channel.send(embed)
     }
-    if(!exists) {
+    if(Name.length !== ExistsList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`🔍 You specified an invalid character!`)
+            .setTitle(`🔍 You specified a character that doesnt exist!`)
         return message.channel.send(embed)
     }
-    if(!Character) {
+    if(Name.length !== CharacterList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that you dont own!`)

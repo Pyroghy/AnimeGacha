@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
     const Model = mongoose.model('Characters');
-    const Name = args.join(' ').toLowerCase();
-    const Character = await Model.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
+    const Name = args.join(' ');
+    const Character = await Model.findOne({ $text: { $search: Name }}).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }})
 
-    if(!Character) {
+    if(!Character || Name.toLowerCase() !== Character.name.toLowerCase()) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 There is no character named \`${Name}\`!`)
@@ -23,7 +23,7 @@ module.exports.run = async(bot, message, args) => {
             embed.setFooter(`Is not claimed by anyone`)
         } else {
             const owner = bot.users.cache.find(owner => owner.id === Character.owner)
-            embed.setFooter(`Owned by ${owner.username}`, owner.avatarURL())
+            embed.setFooter(`Owned By: ${owner.username}`, owner.avatarURL())
         }
         return message.channel.send(embed)
     }

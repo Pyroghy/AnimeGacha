@@ -3,18 +3,20 @@ const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
     const Model = mongoose.model('Characters');
-    const Name = args.join(' ').toLowerCase();
-    const Series = await Model.find({ series: Name }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-    const SeriesName = await Model.findOne({ series: Name }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-    const CharPerPage = 20;
-    const CharacterList = Series.map((Character) => `**${Character.name}** - [<@${Character.owner}>]`)
+    const Series = args.join(' ');
+    const SeriesName = await Model.findOne({ $text: { $search: Series }}).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }});
 
-    if(CharacterList.length === 0) {
+    if(!SeriesName || Series.toLowerCase() !== SeriesName.series.toLowerCase()) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`🔍 There is no series called \`${Name}\`!`)
+            .setTitle(`🔍 There is no series called \`${Series}\`!`)
         return message.channel.send(embed)
     }
+
+    const SeriesChar = await Model.find({ series: SeriesName.series }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
+    const CharPerPage = 20;
+    const CharacterList = SeriesChar.map((Character) => `**${Character.name}** - [<@${Character.owner}>]`)
+
     if(CharacterList.length <= CharPerPage) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
@@ -27,7 +29,7 @@ module.exports.run = async(bot, message, args) => {
         let page = 0;
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(Name)
+            .setTitle(SeriesName.series)
             .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
             .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
         const msg = await message.channel.send(embed);
@@ -50,7 +52,7 @@ module.exports.run = async(bot, message, args) => {
         
             const newEmbed = new MessageEmbed()
                 .setColor('2f3136')
-                .setTitle(Name)
+                .setTitle(SeriesName.series)
                 .setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
                 .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
             return msg.edit(newEmbed);

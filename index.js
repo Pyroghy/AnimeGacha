@@ -9,7 +9,11 @@ bot.aliases = new Collection();
 
 fs.readdirSync(`./Source/Events/`).forEach(dirs => {
 	const events = fs.readdirSync(`./Source/Events/${dirs}/`).filter(files => files.endsWith('.js'));
-	for(const file of events) { if(file === 'cooldown.js') continue;
+	for(const file of events) { 
+		if(file === 'cooldown.js') {
+			console.log(chalk.green(`Loaded event ${chalk.bold('cooldown')}`));
+			continue;
+		}
 		const event = require(`./Source/Events/${dirs}/${file}`);
 		const eventName = file.slice(0, -3);
 		bot.on(eventName, event.bind(null, bot));
