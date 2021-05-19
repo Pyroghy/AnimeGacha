@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
     const member = message.mentions.members.first() || message.member;
-    const Character = mongoose.model('Characters');
-    const Profile = mongoose.model('Profiles');
-    const Waifus = await Character.aggregate([{ $match: { owner: member.id, gender: 'Female' }}]);
-    const Husbandos = await Character.aggregate([{ $match: { owner: member.id, gender: 'Male' }}]);
-    const Total = await Character.aggregate([{ $match: { owner: member.id }}]);
-    const User = await Profile.findOne({ id: member.id });
+    const CharacterModel = mongoose.model('Characters');
+    const ProfileModel = mongoose.model('Profiles');
+    const Waifus = await CharacterModel.aggregate([{ $match: { owner: member.id, gender: 'Female' }}]);
+    const Husbandos = await CharacterModel.aggregate([{ $match: { owner: member.id, gender: 'Male' }}]);
+    const Total = await CharacterModel.aggregate([{ $match: { owner: member.id }}]);
+    const User = await ProfileModel.findOne({ id: member.id });
     if(User === null) { return }
-    const Check = await Character.findOne({ owner: member.id, image: User.image }).collation({ locale: 'en', strength: 2 });
+    const Check = await CharacterModel.findOne({ owner: member.id, image: User.image }).collation({ locale: 'en', strength: 2 });
 
     if(!User) {
         const embed = new MessageEmbed()

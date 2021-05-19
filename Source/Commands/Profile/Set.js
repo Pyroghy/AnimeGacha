@@ -2,12 +2,12 @@ const { MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
-    const Model = mongoose.model('Characters');
-    const Profile = mongoose.model('Profiles');
-    const Name = args.join(' ').toLowerCase();
-    const Character = await Model.findOne({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
-    const exists = await Model.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
-    const User = await Profile.findOne({ id: message.member.id });
+    const CharacterModel = mongoose.model('Characters');
+    const ProfileModel = mongoose.model('Profiles');
+    const Name = args.join(' ');
+    const Character = await CharacterModel.findOne({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
+    const exists = await CharacterModel.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
+    const User = await ProfileModel.findOne({ id: message.member.id });
 
     if(!User) { 
         return message.channel.send('Something went wrong please try again')

@@ -2,9 +2,9 @@ const { MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
-    const Model = mongoose.model('Characters');
+    const CharacterModel = mongoose.model('Characters');
     const Name = args.join(' ');
-    const Character = await Model.findOne({ $text: { $search: Name }}).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }})
+    const Character = await CharacterModel.findOne({ $text: { $search: Name }}).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }})
 
     if(!Character || Name.toLowerCase() !== Character.name.toLowerCase()) {
         const embed = new MessageEmbed()

@@ -5,20 +5,20 @@ const mongoose = require('mongoose');
 const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
-    const Character = mongoose.model('Characters');
-    const Roll = await Character.aggregate([{ $match: { owner: 'null' }}, { $sample: { size: 1 }}]);
+    const CharacterModel = mongoose.model('Characters');
+    const Character = await CharacterModel.aggregate([{ $match: { owner: 'null' }}, { $sample: { size: 1 }}]);
 
-    if(Roll[0] === undefined) { 
+    if(Character[0] === undefined) { 
         return message.channel.send('There are currently no claimable characters!')
     }
     if(!args.length) {
         const embed = new MessageEmbed()
-            .setTitle(Roll[0].name)
+            .setTitle(Character[0].name)
             .setColor('2f3136')
-            .setURL(Roll[0].charURL)
-            .setDescription(`**Series**: ${Roll[0].series}`) 
-            .setImage(Roll[0].image)
-            .setFooter(`React with any emoji to claim ${Roll[0].name}`)
+            .setURL(Character[0].charURL)
+            .setDescription(`**Series**: ${Character[0].series}`) 
+            .setImage(Character[0].image)
+            .setFooter(`React with any emoji to claim ${Character[0].name}`)
         message.channel.send(embed).then(message => {
             const filter = user => user.id === user.id;
             const collector = message.createReactionCollector(filter, { max: 1, time: 30000});
@@ -32,13 +32,13 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await Character.updateOne({ name: Roll[0].name }, { $set: { owner: user.id }});
+                    const Claim = await CharacterModel.updateOne({ name: Character[0].name }, { $set: { owner: user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))
-                        console.log(chalk.green(`The character ${chalk.bold(Roll[0].name)} was claimed by ${chalk.bold(user.username)}`));
+                        console.log(chalk.green(`The character ${chalk.bold(Character[0].name)} was claimed by ${chalk.bold(user.username)}`));
                     } else {
-                        message.channel.send(`There was a problem with claiming **${Roll[0].name}**`)
+                        message.channel.send(`There was a problem with claiming **${Character[0].name}**`)
                     }
                     collector.stop(); reaction.users.remove(user);
                     used.set(user.id, Date.now() + 5000);
@@ -47,8 +47,8 @@ module.exports.run = async(bot, message, args) => {
             });
             collector.on('end', (collected, reason) => {
                 if(reason === 'time') {
-                    console.log(chalk.red(`The Character ${chalk.bold(Roll[0].name)} was not claimed`))
-                    message.edit(embed.setFooter(`${Roll[0].name} is now unclaimable`))
+                    console.log(chalk.red(`The Character ${chalk.bold(Character[0].name)} was not claimed`))
+                    message.edit(embed.setFooter(`${Character[0].name} is now unclaimable`))
                 }
             });
         });

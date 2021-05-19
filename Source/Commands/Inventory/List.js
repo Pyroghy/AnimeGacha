@@ -2,12 +2,12 @@ const { MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
-    const Model = mongoose.model('Characters');
-    const Profile = mongoose.model('Profiles');
+    const CharacterModel = mongoose.model('Characters');
+    const ProfileModel = mongoose.model('Profiles');
     const member = message.mentions.members.first() || message.member;
     if(member.id === bot.user.id) { return }
-    const User = await Profile.findOne({ id: member.id });
-    const Character = await Model.find({ owner: member.id }).sort({ series: 1, name: 1 });
+    const User = await ProfileModel.findOne({ id: member.id });
+    const Character = await CharacterModel.find({ owner: member.id }).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
     const CharacterList = Character.map((Character) => `**${Character.name}** - \`${Character.series}\``)
 
@@ -45,7 +45,6 @@ module.exports.run = async(bot, message, args) => {
                 page += 1
                 reaction.users.remove(user);
             }
-        
             if(page < 0) { page = Math.floor(CharacterList.length/CharPerPage) }
             else if(page > Math.floor(CharacterList.length/CharPerPage)) { page = 0 }
         

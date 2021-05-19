@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
-    const Model = mongoose.model('Characters');
-    const Name = args.join(' ').toLowerCase();
-    const Character = await Model.findOne({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
-    const exists = await Model.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
+    const CharacterModel = mongoose.model('Characters');
+    const Name = args.join(' ');
+    const Character = await CharacterModel.findOne({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
+    const exists = await CharacterModel.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
     const MemberID = message.member.id;
 
     if(!exists) {
@@ -33,7 +33,7 @@ module.exports.run = async(bot, message, args) => {
                 
             collector.on('collect', async(reaction, user) => {
                 if(reaction.emoji.name === '🗑️') {
-                    const Unclaim = await Model.updateOne({ name: Character.name }, { $set: { owner: "null" }});
+                    const Unclaim = await CharacterModel.updateOne({ name: Character.name }, { $set: { owner: "null" }});
 
                     if(Unclaim.n === 1) {
                         embed.setAuthor(`${Character.name} was unclaimed by ${user.username}`, Character.image, Character.charURL)

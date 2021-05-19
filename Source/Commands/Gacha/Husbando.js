@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
-    const Character = mongoose.model('Characters');
-    const Husbando = await Character.aggregate([{ $match: { owner: 'null', gender: 'Male' }}, { $sample: { size: 1 }}]);
+    const CharacterModel = mongoose.model('Characters');
+    const Husbando = await CharacterModel.aggregate([{ $match: { owner: 'null', gender: 'Male' }}, { $sample: { size: 1 }}]);
 
     if(Husbando[0] === undefined) { 
         return message.channel.send('There are currently no claimable characters!')
@@ -32,7 +32,7 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await Character.updateOne({ name: Husbando[0].name }, { $set: { owner: user.id }});
+                    const Claim = await CharacterModel.updateOne({ name: Husbando[0].name }, { $set: { owner: user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))
