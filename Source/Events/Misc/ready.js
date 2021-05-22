@@ -10,7 +10,7 @@ module.exports = (bot, ready) => {
         require('../../../Source/Models/Characters.js');
         require('../../../Source/Models/Profile.js');
         console.log(chalk.green('Database Status: Online'));
-        console.log(`Logged in as ${bot.user.username}`)
+        console.log(`Logged in as ${chalk.bold(bot.user.username)}`)
         bot.user.setPresence({
             status: 'online',
             activity: {

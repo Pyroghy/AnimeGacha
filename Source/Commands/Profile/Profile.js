@@ -9,7 +9,27 @@ module.exports.run = async(bot, message, args) => {
     const Husbandos = await CharacterModel.aggregate([{ $match: { owner: member.id, gender: 'Male' }}]);
     const Total = await CharacterModel.aggregate([{ $match: { owner: member.id }}]);
     const User = await ProfileModel.findOne({ id: member.id });
-    if(User === null) { return }
+
+    if(member.user.bot) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`The user you specified is a bot!`)
+        return message.channel.send(embed)
+    }
+    if(User === null) {
+        ProfileModel.create({
+            id: member.id,
+            username: member.user.username,
+            image: member.user.avatarURL()
+        })
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`${member.user.username}'s Profile`)
+            .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
+            .setThumbnail(member.user.avatarURL())
+        return message.channel.send(embed)
+    }
+
     const Check = await CharacterModel.findOne({ owner: member.id, image: User.image }).collation({ locale: 'en', strength: 2 });
 
     if(!User) {

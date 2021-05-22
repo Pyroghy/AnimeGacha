@@ -8,9 +8,6 @@ module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const Character = await CharacterModel.aggregate([{ $match: { owner: 'null' }}, { $sample: { size: 1 }}]);
 
-    if(Character[0] === undefined) { 
-        return message.channel.send('There are currently no claimable characters!')
-    }
     if(!args.length) {
         const embed = new MessageEmbed()
             .setTitle(Character[0].name)
@@ -32,7 +29,7 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await CharacterModel.updateOne({ name: Character[0].name }, { $set: { owner: user.id }});
+                    const Claim = await CharacterModel.updateOne({ owner: 'null', charURL: Character[0].charURL }, { $set: { owner: user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))

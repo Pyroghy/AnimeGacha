@@ -9,8 +9,25 @@ module.exports.run = async(bot, message, args) => {
     const exists = await CharacterModel.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
     const User = await ProfileModel.findOne({ id: message.member.id });
 
-    if(!User) { 
-        return message.channel.send('Something went wrong please try again')
+    if(!User) {
+        if(!Character) {
+            const embed = new MessageEmbed()
+                .setColor('2f3136')
+                .setTitle(`🔍 You dont own \`${Name}\`!`)
+            return message.channel.send(embed)
+        }
+        else {
+            ProfileModel.create({
+                id: message.member.id,
+                username: message.member.user.username,
+                image: Character.image
+            })
+
+            const embed = new MessageEmbed()
+                .setColor('2f3136')
+                .setAuthor(`${Character.name} has been set to your profile!`, Character.image)
+            return message.channel.send(embed)
+        }
     }
     if(!exists) {
         const embed = new MessageEmbed()
@@ -31,7 +48,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     else {        
-        const Update = await Profile.updateOne({ id: message.member.id }, { $set: { image: Character.image }});
+        const Update = await ProfileModel.updateOne({ id: message.member.id }, { $set: { image: Character.image }});
 
         if(Update) {
             const embed = new MessageEmbed()
@@ -39,7 +56,7 @@ module.exports.run = async(bot, message, args) => {
                 .setAuthor(`${Character.name} has been set to your profile!`, Character.image)
             return message.channel.send(embed)
         } else {
-            return message.channel.send(`There was a problem with claiming **${Character.name}**`)
+            return message.channel.send(`There was a problem with setting **${Character.name}** to your profile`)
         }
     }
 };

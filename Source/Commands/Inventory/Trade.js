@@ -24,6 +24,12 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You cannot gift characrers to bots!`)
         return message.channel.send(embed)
     }
+    if(!args.slice(1).join(' ')) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`You need to specify the character(s) you want to trade!`)
+        return message.channel.send(embed)
+    }
     if(MemberGive.length !== MExistsList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
@@ -41,9 +47,9 @@ module.exports.run = async(bot, message, args) => {
         const MemberOffer = MCharacterList.join(', ').replace(/, ([^,]*)$/, ' and $1');
         message.channel.send(`Hey ${wewber}, **${member.user.username}** wants to trade with you!`).then(message => {
             const filter = message => message.member.id === member.id || wewber.id;
-            const collector = message.channel.createMessageCollector(filter, { time: 120000 });
+            const MessageCollector = message.channel.createMessageCollector(filter, { time: 120000 });
             
-            collector.on('collect', async(message) => {
+            MessageCollector.on('collect', async(message) => {
                 if(message.member.id === wewber.id) {
                     const argz = message.content.slice(1).trim().split(' ');
                     if(message.content.startsWith('-t')) {
@@ -53,6 +59,12 @@ module.exports.run = async(bot, message, args) => {
                         const WExists = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 });
                         const WExistsList = WExists.map((Character) => Character.name);
 
+                        if(!argz.slice(1).join(' ')) {
+                            const embed = new MessageEmbed()
+                                .setColor('2f3136')
+                                .setTitle(`You need to specify the character(s) you want to trade!`)
+                            return message.channel.send(embed)
+                        }
                         if(WewberGive.length !== WExistsList.length) {
                             const embed = new MessageEmbed()
                                 .setColor('2f3136')
@@ -78,15 +90,16 @@ module.exports.run = async(bot, message, args) => {
                                 .setFooter('React with ✅ to seal the deal!')
                             message.channel.send(embed).then(message => {
                                 const filter = (reaction, user) => reaction.emoji.name === '✅' && user.id === member.id && wewber.id;
-                                const collector = message.createReactionCollector(filter, { max: 2, time: 120000}); message.react('✅')
-                                collector.on('collect', (reaction, user) => { 
-                                    collector.stop()
+                                const ReactionCollector = message.createReactionCollector(filter, { max: 2, time: 120000}); message.react('✅')
+                                ReactionCollector.on('collect', (reaction, user) => {
+                                    if(user.bot) { return }
+                                    ReactionCollector.stop()
                                 });
-                                collector.on('end', (collected, reason) => {
+                                ReactionCollector.on('end', (collected, reason) => {
                                     message.reactions.removeAll();
-                                    if(reason === 'time') {
-                                        console.log(chalk.bold.red(`The trade was closed`))
-                                        return message.channel.send('**The trade was closed**')
+                                    if(reason === 'time') { 
+                                        console.log(chalk.bold.red(`The trade was closed due to time`))
+                                        return message.channel.send('**The trade was closed due to time**')
                                     }
                                     else {
                                         MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: member.id, name: Char.name }, { $set: { owner: wewber.id }}))
@@ -101,13 +114,18 @@ module.exports.run = async(bot, message, args) => {
                         }
                     }
                 }
-                if(message.content.startsWith('-c')) {
-                    collector.stop()
+                if(message.member.id === member.id || message.member.id === wewber.id) {
+                    if(message.content.startsWith('-c')) {
+                        MessageCollector.stop();
+                    }
                 }
             });
-            collector.on('end', collected => {
-                console.log(chalk.bold.red(`The trade was closed`))
-                return message.channel.send('**The trade was closed**')
+            MessageCollector.on('end', (collected, reason) => {
+                if(reason === 'time') { return }
+                if(reason === 'user') {
+                    console.log(chalk.bold.red(`The trade was closed`))
+                    return message.channel.send('**The trade was closed**')
+                }
             });
         })
     }
