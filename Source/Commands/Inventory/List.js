@@ -5,7 +5,14 @@ module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const ProfileModel = mongoose.model('Profiles');
     const member = message.mentions.members.first() || message.member;
-    if(member.id === bot.user.id) { return }
+
+    if(member.user.bot) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`The user you specified is a bot!`)
+        return message.channel.send(embed)
+    }
+    
     const User = await ProfileModel.findOne({ id: member.id });
     const Character = await CharacterModel.find({ owner: member.id }).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
