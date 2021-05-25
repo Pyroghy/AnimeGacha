@@ -13,21 +13,24 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
 
-    const User = await ProfileModel.findOne({ id: member.id });
+
     const Character = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}}).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
     const CharacterList = Character.map((Character) => `**${Character.name}** - \`${Character.series}\``)
-
+    
     if(CharacterList.length === 0) {
         return message.reply('You have no claimed characters!')
     }
 
+    const User = await ProfileModel.findOne({ id: member.id });
+    const Guild = User.images.find(gi => gi.guild === message.guild.id);
+    const Index = User.images.indexOf(Guild);
     let page = 0;
     const embed = new MessageEmbed()
         .setColor('2f3136')
         .setTitle(`${member.user.username}'s claimed characters`)
         .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
-        .setThumbnail(User.image)
+        .setThumbnail(User.images[Index].image)
         .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
     message.channel.send(embed).then(async(message) => {
         if(CharacterList.length > CharPerPage) {
@@ -47,7 +50,7 @@ module.exports.run = async(bot, message, args) => {
                 .setColor('2f3136')
                 .setTitle(`${member.user.username}'s claimed characters`)
                 .setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
-                .setThumbnail(User.image)
+                .setThumbnail(User.images[Index].image)
                 .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
             return message.edit(newEmbed);
         })

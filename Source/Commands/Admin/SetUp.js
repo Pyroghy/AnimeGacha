@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
+
     const Character = await CharacterModel.findOne({ owners: { $elemMatch: { guild: message.guild.id }} });
 
     if(message.member.hasPermission('ADMINISTRATOR')) {
