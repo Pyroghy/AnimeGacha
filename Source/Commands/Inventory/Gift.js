@@ -6,7 +6,7 @@ module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const member = message.mentions.members.first();
     const Name = args.slice(1).join(' ').split(', ');
-    const Character = await CharacterModel.find({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
+    const Character = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: message.member.id }}, name: Name }).collation({ locale: 'en', strength: 2 });
     const CharacterList = Character.map((Character) => Character.name);
     const Exists = await CharacterModel.find({ name: Name }).collation({ locale: 'en', strength: 2 });
     const ExistsList = Exists.map((Character) => Character.name);
@@ -45,7 +45,7 @@ module.exports.run = async(bot, message, args) => {
         const CharacterList = Character.map((Character) => `${Character.name}`)
         const CharacterGift = CharacterList.join(', ').replace(/, ([^,]*)$/, '\` and \`$1');
 
-        Character.forEach(async(Char) => await CharacterModel.updateMany({ owner: message.member.id, name: Char.name }, { $set: { owner: member.id }}))
+        Character.forEach(async(Char) => await CharacterModel.updateMany({ 'owners.guild': message.guild.id, id: Char.id }, { $set: { 'owners.$.owner': member.id }}))
 
         const embed = new MessageEmbed()
             .setColor('2f3136')

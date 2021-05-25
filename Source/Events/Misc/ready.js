@@ -6,7 +6,7 @@ module.exports = (bot, ready) => {
     mongoose.connect(process.env.MONGO, {
         useNewUrlParser: true,
         useUnifiedTopology: true
-    }).then(() => {
+    }).then(async() => {
         require('../../../Source/Models/Characters.js');
         require('../../../Source/Models/Profile.js');
         console.log(chalk.green('Database Status: Online'));

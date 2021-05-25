@@ -12,9 +12,9 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`The user you specified is a bot!`)
         return message.channel.send(embed)
     }
-    
+
     const User = await ProfileModel.findOne({ id: member.id });
-    const Character = await CharacterModel.find({ owner: member.id }).sort({ series: 1, name: 1 });
+    const Character = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}}).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
     const CharacterList = Character.map((Character) => `**${Character.name}** - \`${Character.series}\``)
 

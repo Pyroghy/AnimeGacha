@@ -7,7 +7,7 @@ module.exports.run = async(bot, message, args) => {
     const member = message.member;
     const wewber = message.mentions.members.first();
     const MemberGive = args.slice(1).join(' ').split(', ');
-    const MCharacterGive = await CharacterModel.find({ owner: member.id, name: MemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
+    const MCharacterGive = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}, name: MemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
     const MCharacterList = MCharacterGive.map((Character) => Character.name);
     const MExists = await CharacterModel.find({ name: MemberGive }).collation({ locale: 'en', strength: 2 });
     const MExistsList = MExists.map((Character) => Character.name);
@@ -54,9 +54,9 @@ module.exports.run = async(bot, message, args) => {
                     const argz = message.content.slice(1).trim().split(' ');
                     if(message.content.startsWith('-t')) {
                         const WewberGive = argz.slice(1).join(' ').split(', ');
-                        const WCharacterGive = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
+                        const WCharacterGive = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: wewber.id }}, name: WewberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
                         const WCharacterList = WCharacterGive.map((Character) => Character.name);
-                        const WExists = await CharacterModel.find({ owner: wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 });
+                        const WExists = await CharacterModel.find({ name: WewberGive }).collation({ locale: 'en', strength: 2 });
                         const WExistsList = WExists.map((Character) => Character.name);
 
                         if(!argz.slice(1).join(' ')) {
@@ -102,8 +102,8 @@ module.exports.run = async(bot, message, args) => {
                                         return message.channel.send('**The trade was closed due to time**')
                                     }
                                     else {
-                                        MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: member.id, name: Char.name }, { $set: { owner: wewber.id }}))
-                                        WCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: wewber.id, name: Char.name }, { $set: { owner: member.id }}))
+                                        MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ 'owners.guild': message.guild.id, 'owners.owner': member.id, id: Char.id }, { $set: { 'owners.$.owner': wewber.id }}))
+                                        WCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ 'owners.guild': message.guild.id, 'owners.owner': wewber.id, id: Char.id }, { $set: { 'owners.$.owner': member.id }}))
 
                                         console.log(chalk.green(`${chalk.bold(member.user.username)} traded ${chalk.bold(MemberOffer).replaceAll('**', '')} to ${chalk.bold(wewber.user.username)}`))
                                         console.log(chalk.green(`${chalk.bold(wewber.user.username)} traded ${chalk.bold(WewberOffer).replaceAll('**', '')} to ${chalk.bold(member.user.username)}`))

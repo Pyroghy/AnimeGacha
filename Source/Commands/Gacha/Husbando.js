@@ -6,8 +6,9 @@ const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
-    const Husbando = await CharacterModel.aggregate([{ $match: { owner: 'null', gender: 'Male' }}, { $sample: { size: 1 }}]);
-
+    const Husbando = await CharacterModel.aggregate([{ $match: { owners: { $elemMatch: { guild: message.guild.id, owner: 'null' }}, gender: 'Male' }}, { $sample: { size: 1 }}]);
+    
+    if(!Husbando[0]) { return }
     if(!args.length) {
         const embed = new MessageEmbed()
             .setTitle(Husbando[0].name)
@@ -29,7 +30,7 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await CharacterModel.updateOne({ owner: 'null', charURL: Husbando[0].charURL }, { $set: { owner: user.id }});
+                    const Claim = await CharacterModel.updateOne({ 'owners.guild': message.guild.id, id: Husbando[0].id }, { $set: { 'owners.$.owner': user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))
