@@ -12,7 +12,7 @@ module.exports = async(bot, member) => {
             ProfileModel.create({
                 id: member.id,
                 username: member.user.username,
-                image: {
+                images: {
                     guild: member.user.id,
                     image: member.user.avatarURL()
                 }
@@ -20,7 +20,7 @@ module.exports = async(bot, member) => {
             return console.log(chalk.bold.green(`NEW USER ID REGISTERED`))
         }
         else {
-            await ProfileModel.updateOne({ 'owners.guild': member.guild.id, id: member.id }, { $push: { 'images.$.image': member.user.avatarURL() }});
+            await ProfileModel.updateOne({ 'images.guild': member.guild.id, id: member.id }, { $push: { 'images.$.image': member.user.avatarURL() }});
             return console.log(chalk.bold.green(`The User ${member.id} was registed in the guild ${member.guild.id}`))
         }
     }

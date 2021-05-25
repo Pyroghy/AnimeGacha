@@ -20,7 +20,7 @@ module.exports.run = async(bot, message, args) => {
         ProfileModel.create({
             id: member.id,
             username: member.user.username,
-            image: {
+            images: {
                 guild: message.guild.id,
                 image: member.user.avatarURL()
             }
@@ -35,6 +35,17 @@ module.exports.run = async(bot, message, args) => {
     if(User) {
         const Guild = User.images.find(gi => gi.guild === message.guild.id);
         const Index = User.images.indexOf(Guild);
+
+        if(User.images[Index] === undefined) {
+            await ProfileModel.updateOne({ id: member.id }, { $push: { images: { guild: member.guild.id, image: member.user.avatarURL() }}});
+            const embed = new MessageEmbed()
+                .setColor('2f3136')
+                .setTitle(`${member.user.username}'s Profile`)
+                .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
+                .setThumbnail(member.user.avatarURL())
+            return message.channel.send(embed)
+        }
+
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`${User.username}'s Profile`)

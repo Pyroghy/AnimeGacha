@@ -20,7 +20,7 @@ module.exports.run = async(bot, message, args) => {
             ProfileModel.create({
                 id: message.member.id,
                 username: message.member.user.username,
-                image: {
+                images: {
                     guild: message.guild.id,
                     image: Character.image
                 }
@@ -54,7 +54,9 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     else {        
-        const Update = await ProfileModel.updateOne({ 'owners.guild': message.guild.id, id: message.member.id }, { $set: { 'images.$.image': Character.image }});
+        const Update = await ProfileModel.updateOne({ 'images.guild': message.guild.id, id: message.member.id }, { $set: { 'images.$.image': Character.image }});
+
+        console.log(Update)
         
         if(Update) {
             const embed = new MessageEmbed()

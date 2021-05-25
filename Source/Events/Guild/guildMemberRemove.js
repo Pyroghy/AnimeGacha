@@ -6,7 +6,7 @@ module.exports = async(bot, member) => {
     
     if(member.bot) { return }
     else {
-        await ProfileModel.updateOne({ 'owners.guild': member.guild.id, id: member.id }, { $pull: { images: { 'guild': member.guild.id }}});
+        await ProfileModel.updateOne({ 'images.guild': member.guild.id, id: member.id }, { $pull: { images: { 'guild': member.guild.id }}});
         return console.log(chalk.bold.green(`The User ${member.id} was deleted from the guild ${member.guild.id}`))
     }
 };
