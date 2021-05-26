@@ -40,7 +40,7 @@ module.exports.run = async(bot, message, args) => {
             collector.on('collect', async(reaction, user) => {
                 if(user.id === MemberID) {
                     if(reaction.emoji.name === '🗑️') {
-                        const Unclaim = await CharacterModel.updateOne({ 'owners.guild': message.guild.id, 'owners.owner': MemberID, id: Character.id }, { $set: { 'owners.$.owner': 'null' }});
+                        const Unclaim = await CharacterModel.updateOne({ owners: { guild: message.guild.id, owner: MemberID }, id: Character.id }, { $set: { 'owners.$.owner': 'null' }});
 
                         if(Unclaim.n === 1) {
                             message.edit(embed.setAuthor(`${Character.name} was unclaimed by ${user.username}`, Character.image, Character.charURL).setFooter(''))

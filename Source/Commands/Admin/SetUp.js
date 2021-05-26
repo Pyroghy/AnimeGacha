@@ -9,10 +9,10 @@ module.exports.run = async(bot, message, args) => {
     if(message.member.hasPermission('ADMINISTRATOR')) {
         if(!Character) {
             await CharacterModel.updateMany({}, { $push: { owners: { 'guild': message.guild.id, 'owner': 'null' }}});
-            return console.log('Characters are now claimable')
+            return message.channel.send('Characters are now claimable')
         }
         if(Character) {
-            return console.log('You cannot do this command anymore!')
+            return message.channel.send('You cannot do this command anymore!')
         }
     }
     else {

@@ -6,20 +6,24 @@ module.exports.run = async(bot, message, args) => {
     const ProfileModel = mongoose.model('Profiles');
     const member = message.mentions.members.first() || message.member;
 
-    if(member.user.bot) {
+    if(args.length === 1 && args.join(' ') !== `<@!${member.id}>` || member.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`The user you specified is a bot!`)
+            .setTitle(`You specified an invalid user!`)
         return message.channel.send(embed)
     }
-
-
+    
     const Character = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}}).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
     const CharacterList = Character.map((Character) => `**${Character.name}** - \`${Character.series}\``)
     
     if(CharacterList.length === 0) {
-        return message.reply('You have no claimed characters!')
+        if(member.id === message.member.id) {
+            return message.channel.send('You have no claimed characters!')
+        }
+        if(member.id !== message.member.id) {
+            return message.channel.send(`**${member.user.username}** has no claimed characters!`)
+        }
     }
 
     const User = await ProfileModel.findOne({ id: member.id });

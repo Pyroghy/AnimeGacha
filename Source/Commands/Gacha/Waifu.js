@@ -30,13 +30,13 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await CharacterModel.updateOne({ 'owners.guild': message.guild.id, id: Waifu[0].id }, { $set: { 'owners.$.owner': user.id }});
+                    const Claim = await CharacterModel.updateOne({ owners: { guild: message.guild.id, owner: 'null' }, id: Waifu[0].id }, { $set: { 'owners.$.owner': user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))
                         console.log(chalk.green(`The character ${chalk.bold(Waifu[0].name)} was claimed by ${chalk.bold(user.username)}`));
                     } else {
-                        message.channel.send(`There was a problem with claiming **${Waifu[0].name}**`)
+                        return message.channel.send(`There was a problem with claiming **${Waifu[0].name}**`)
                     }
                     collector.stop(); reaction.users.remove(user);
                     used.set(user.id, Date.now() + 5000);

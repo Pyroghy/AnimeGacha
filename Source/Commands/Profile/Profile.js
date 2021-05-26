@@ -10,10 +10,10 @@ module.exports.run = async(bot, message, args) => {
     const Total = await CharacterModel.aggregate([{ $match: { owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}}}]);
     const User = await ProfileModel.findOne({ id: member.id });
 
-    if(member.user.bot) {
+    if(args.length === 1 && args.join(' ') !== `<@!${member.id}>` || member.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`The user you specified is a bot!`)
+            .setTitle(`You specified an invalid user!`)
         return message.channel.send(embed)
     }
     if(!User) {

@@ -18,6 +18,12 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You need to specify the member that you want to trade with!`)
         return message.channel.send(embed)
     }
+    if(wewber.id === member.id) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`You cannot trade with yourself!`)
+        return message.channel.send(embed)
+    }
     if(wewber.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
@@ -30,13 +36,13 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You need to specify the character(s) you want to trade!`)
         return message.channel.send(embed)
     }
-    if(MemberGive.length !== MExistsList.length) {
+    if(MemberGive.length > MExistsList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that doesnt exist!`)
         return message.channel.send(embed)
     }
-    if(MemberGive.length !== MCharacterList.length) {
+    if(MemberGive.length > MCharacterList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that you dont own!`)
@@ -65,13 +71,13 @@ module.exports.run = async(bot, message, args) => {
                                 .setTitle(`You need to specify the character(s) you want to trade!`)
                             return message.channel.send(embed)
                         }
-                        if(WewberGive.length !== WExistsList.length) {
+                        if(WewberGive.length > WExistsList.length) {
                             const embed = new MessageEmbed()
                                 .setColor('2f3136')
                                 .setTitle(`🔍 You specified a character that doesnt exist!`)
                             return message.channel.send(embed)
                         }
-                        if(WewberGive.length !== WCharacterList.length) {
+                        if(WewberGive.length > WCharacterList.length) {
                             const embed = new MessageEmbed()
                                 .setColor('2f3136')
                                 .setTitle(`🔍 You specified a character that you dont own!`)

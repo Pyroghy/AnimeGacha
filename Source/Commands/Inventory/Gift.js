@@ -2,6 +2,9 @@ const { MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 
+// exists is registering BOTH chars with the same name
+// when name.length = 1 | exists.length will = 2
+
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const member = message.mentions.members.first();
@@ -17,6 +20,12 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You need to specify the member that you want to give characters!`)
         return message.channel.send(embed)
     }
+    if(member.id === message.member.id) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`You cannot gift yourself characters!`)
+        return message.channel.send(embed)
+    }
     if(member.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
@@ -29,13 +38,13 @@ module.exports.run = async(bot, message, args) => {
             .setTitle(`You need to specify the character(s) you want to gift!`)
         return message.channel.send(embed)
     }
-    if(Name.length !== ExistsList.length) {
+    if(Name.length > ExistsList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that doesnt exist!`)
         return message.channel.send(embed)
     }
-    if(Name.length !== CharacterList.length) {
+    if(Name.length > CharacterList.length) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`🔍 You specified a character that you dont own!`)
@@ -48,8 +57,8 @@ module.exports.run = async(bot, message, args) => {
         Character.forEach(async(Char) => await CharacterModel.updateMany({ 'owners.guild': message.guild.id, id: Char.id }, { $set: { 'owners.$.owner': member.id }}))
 
         const embed = new MessageEmbed()
-            .setColor('2f3136')
-            .setTitle(`You have gifted \`${CharacterGift}\` to **${member.user.username}**`)
+            .setColor('00FF00')
+            .setDescription(`You have gifted \`${CharacterGift}\` to **${member.user.username}**`)
         message.channel.send(embed)
         console.log(chalk.green(`${chalk.bold(message.member.user.username)} gifted ${chalk.bold(member.user.username)} the character(s) ${chalk.bold(CharacterGift).replaceAll('`', '')}`))
     }

@@ -4,7 +4,7 @@ const characterSchema = new Schema({
     owners: Array,
     name: String,
     charURL: String,
-    id: Array,
+    id: String,
     gender: String,
     series: String,
     image: String

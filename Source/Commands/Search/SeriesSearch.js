@@ -12,7 +12,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     else {
-        const SeriesSearch = await CharacterModel.aggregate([{ $search: { 'index': 'default', 'text': { query: SeriesName, path: 'series' }}}]).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }});
+        const SeriesSearch = await CharacterModel.aggregate([{ $search: { 'index': 'Search', 'text': { query: SeriesName, path: 'series' }}}]).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }});
         
         if(!SeriesSearch[0]) {
             const embed = new MessageEmbed()

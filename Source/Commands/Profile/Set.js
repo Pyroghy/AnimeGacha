@@ -9,6 +9,13 @@ module.exports.run = async(bot, message, args) => {
     const Exists = await CharacterModel.findOne({ name: Name }).collation({ locale: 'en', strength: 2 });
     const User = await ProfileModel.findOne({ id: message.member.id });
 
+    if(!Name) {
+        const embed = new MessageEmbed()
+            .setColor('2f3136')
+            .setTitle(`You need to specify a character to set to your profile!`)
+        return message.channel.send(embed)
+    }
+
     if(!User) {
         if(!Character) {
             const embed = new MessageEmbed()
@@ -55,10 +62,8 @@ module.exports.run = async(bot, message, args) => {
     }
     else {        
         const Update = await ProfileModel.updateOne({ 'images.guild': message.guild.id, id: message.member.id }, { $set: { 'images.$.image': Character.image }});
-
-        console.log(Update)
         
-        if(Update) {
+        if(Update.n === 1) {
             const embed = new MessageEmbed()
                 .setColor('2f3136')
                 .setAuthor(`${Character.name} has been set to your profile!`, Character.image)
