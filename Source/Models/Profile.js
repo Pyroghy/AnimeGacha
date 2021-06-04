@@ -4,7 +4,7 @@ const profileSchema = new Schema({
     id: String,
     username: String,
     character: String,
-    images: Array
+    image: String
 });
 
 model('Profiles', profileSchema, 'Profiles');

@@ -6,7 +6,7 @@ const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
-    const Waifu = await CharacterModel.aggregate([{ $match: { owners: { $elemMatch: { guild: message.guild.id, owner: 'null' }}, gender: 'Female' }}, { $sample: { size: 1 }}]);
+    const Waifu = await CharacterModel.aggregate([{ $match: { owner: 'null', gender: 'Female' }}, { $sample: { size: 1 }}]);
 
     if(!Waifu[0]) { return }
     if(!args.length) {
@@ -30,7 +30,7 @@ module.exports.run = async(bot, message, args) => {
                     collector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await CharacterModel.updateOne({ owners: { guild: message.guild.id, owner: 'null' }, id: Waifu[0].id }, { $set: { 'owners.$.owner': user.id }});
+                    const Claim = await CharacterModel.updateOne({ owner: 'null', id: Waifu[0].id }, { $set: { owner: user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))

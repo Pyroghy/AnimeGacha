@@ -1,3 +1,4 @@
+const { MessageButton, MessageActionRow } = require('discord-buttons');
 const { MessageEmbed } = require('discord.js');
 const mongoose = require('mongoose');
 
@@ -13,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     
-    const Character = await CharacterModel.find({ owners: { $elemMatch: { guild: message.guild.id, owner: member.id }}}).sort({ series: 1, name: 1 });
+    const Character = await CharacterModel.find({ owner: member.id }).sort({ series: 1, name: 1 });
     const CharPerPage = 20;
     const CharacterList = Character.map((Character) => `**${Character.name}** - \`${Character.series}\``)
     
@@ -27,39 +28,38 @@ module.exports.run = async(bot, message, args) => {
     }
 
     const User = await ProfileModel.findOne({ id: member.id });
-    const Guild = User.images.find(gi => gi.guild === message.guild.id);
-    const Index = User.images.indexOf(Guild);
     let page = 0;
+    const previous = new MessageButton().setStyle('blurple').setLabel('Previous').setID('previous')
+    const next = new MessageButton().setStyle('blurple').setLabel('Next').setID('next')
+    const Pages = new MessageActionRow().addComponent(previous).addComponent(next);
     const embed = new MessageEmbed()
         .setColor('2f3136')
         .setTitle(`${member.user.username}'s claimed characters`)
         .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
-        .setThumbnail(User.images[Index].image)
+        .setThumbnail(User.image)
         .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
-    message.channel.send(embed).then(async(message) => {
-        if(CharacterList.length > CharPerPage) {
-            await message.react('⬅'); await message.react('➡');
-        }
-
-        const filter = (reaction, user) => user.id === user.id && (reaction.emoji.name === '⬅' || reaction.emoji.name === '➡');
+    let Send;
+    if(CharacterList.length > CharPerPage) { Send =  { embed: embed, component: Pages } }
+    if(CharacterList.length < CharPerPage) { Send =  embed }
+    message.channel.send(Send).then(async(message) => {
+        const filter = button => button.clicker.user.id === button.clicker.user.id;
         const collector = message.createReactionCollector(filter, { time: 300000 });
-            
-        collector.on('collect', async(reaction, user) => {
-            if(reaction.emoji.name === '⬅') { page -= 1; reaction.users.remove(user) }
-            if(reaction.emoji.name === '➡') { page += 1; reaction.users.remove(user) }
+
+        collector.on('collect', async(button) => {
+            if(button.id === 'previous') { page -= 1 }
+            if(button.id === 'next') { page += 1 }
             if(page < 0) { page = Math.floor(CharacterList.length/CharPerPage) }
             if(page > Math.floor(CharacterList.length/CharPerPage)) { page = 0 }
-            
-            const newEmbed = new MessageEmbed()
-                .setColor('2f3136')
-                .setTitle(`${member.user.username}'s claimed characters`)
-                .setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
-                .setThumbnail(User.images[Index].image)
-                .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
-            return message.edit(newEmbed);
+
+            embed.setColor('2f3136')
+            embed.setTitle(`${member.user.username}'s claimed characters`)
+            embed.setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
+            embed.setThumbnail(User.image)
+            embed.setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
+            button.defer();
+            return message.edit({ embed: embed, component: Pages })
         })
     })
-
 };
 
 module.exports.help = {

@@ -2,6 +2,7 @@ const { Client, Collection } = require('discord.js');
 const chalk = require('chalk');
 require('dotenv').config();
 const bot = new Client();
+require('discord-buttons')(bot);
 const fs = require('fs');
 
 bot.commands = new Collection();

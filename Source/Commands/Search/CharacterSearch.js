@@ -21,9 +21,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     
-    const CharacterMatch = await CharacterModel.aggregate([{ $match: { owners: { $elemMatch: { guild: message.guild.id }}, name: CharacterSearch[0].name }}]);
-    const Guild = CharacterMatch[0].owners.find(go => go.guild === message.guild.id);
-    const Index = CharacterMatch[0].owners.indexOf(Guild);
+    const CharacterMatch = await CharacterModel.aggregate([{ $match: { name: CharacterSearch[0].name }}]);
 
     if(CharacterMatch[0]) {
         const embed = new MessageEmbed()
@@ -32,10 +30,10 @@ module.exports.run = async(bot, message, args) => {
             .setURL(CharacterMatch[0].charURL)
             .setDescription(`**Series**: ${CharacterMatch[0].series}\n**Gender**: ${CharacterMatch[0].gender}`)
             .setThumbnail(CharacterMatch[0].image)
-        if(CharacterMatch[0].owners[Index].owner === 'null') {
+        if(!CharacterMatch[0].owner) {
             embed.setFooter(`Is not claimed by anyone`)
         } else {
-            const owner = bot.users.cache.find(owner => owner.id === CharacterMatch[0].owners[Index].owner)
+            const owner = bot.users.cache.find(owner => owner.id === CharacterMatch[0].owner)
             embed.setFooter(`Owned By ${owner.username}`, owner.avatarURL())
         }
         return message.channel.send(embed);
