@@ -1,14 +1,14 @@
 const { model, Schema } = require('mongoose');
 
 const characterSchema = new Schema({
-    owner: String,
-    name: String,
-    charURL: String,
-    id: String,
-    gender: String,
-    series: String,
-    image: String,
-    stats: Object
+    Owner: String,
+    Name: String,
+    Url: String,
+    Id: String,
+    Gender: String,
+    Series: Object,
+    Image: String,
+    Stats: Object
 });
 
 model('Characters', characterSchema, 'Characters');

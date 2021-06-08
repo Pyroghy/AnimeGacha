@@ -8,10 +8,10 @@ module.exports.run = async(bot, message, args) => {
     const Member = message.member;
     const Wewber = message.mentions.members.first();
     const MemberGive = args.slice(1).join(' ').split(', ');
-    const MCharacterGive = await CharacterModel.find({ owner: Member.id, name: MemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-    const MCharacterList = MCharacterGive.map((Character) => Character.name);
-    const MExists = await CharacterModel.find({ name: MemberGive }).collation({ locale: 'en', strength: 2 });
-    const MExistsList = MExists.map((Character) => Character.name);
+    const MCharacterGive = await CharacterModel.find({ Owner: Member.id, Name: MemberGive }).collation({ locale: 'en', strength: 2 }).sort({ Name: 1 });
+    const MCharacterList = MCharacterGive.map((Character) => Character.Name);
+    const MExists = await CharacterModel.find({ Name: MemberGive }).collation({ locale: 'en', strength: 2 });
+    const MExistsList = MExists.map((Character) => Character.Name);
 
     if(!Wewber) {
         const embed = new MessageEmbed()
@@ -65,10 +65,10 @@ module.exports.run = async(bot, message, args) => {
                     const argz = message.content.slice(1).trim().split(' ');
                     if(message.content.startsWith('-t')) {
                         const WewberGive = argz.slice(1).join(' ').split(', ');
-                        const WCharacterGive = await CharacterModel.find({ owner: Wewber.id, name: WewberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
-                        const WCharacterList = WCharacterGive.map((Character) => Character.name);
-                        const WExists = await CharacterModel.find({ name: WewberGive }).collation({ locale: 'en', strength: 2 });
-                        const WExistsList = WExists.map((Character) => Character.name);
+                        const WCharacterGive = await CharacterModel.find({ Owner: Wewber.id, Name: WewberGive }).collation({ locale: 'en', strength: 2 }).sort({ Name: 1 });
+                        const WCharacterList = WCharacterGive.map((Character) => Character.Name);
+                        const WExists = await CharacterModel.find({ Name: WewberGive }).collation({ locale: 'en', strength: 2 });
+                        const WExistsList = WExists.map((Character) => Character.Name);
 
                         if(!argz.slice(1).join(' ')) {
                             const embed = new MessageEmbed()
@@ -159,8 +159,8 @@ module.exports.run = async(bot, message, args) => {
                                         return message.edit(embed)
                                     }
                                     if(reason === 'completed') {
-                                        MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: Member.id, id: Char.id }, { $set: { owner: Wewber.id }}))
-                                        WCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ owner: Wewber.id, id: Char.id }, { $set: { owner: Member.id }}))
+                                        MCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ Owner: Member.id, Id: Char.Id }, { $set: { Owner: Wewber.id }}))
+                                        WCharacterGive.forEach(async(Char) => await CharacterModel.updateMany({ Owner: Wewber.id, Id: Char.Id }, { $set: { Owner: Member.id }}))
                                         console.log(chalk.green(`${chalk.bold(Member.user.username)} traded ${chalk.bold(MemberOffer).replaceAll('`', '')} to ${chalk.bold(Wewber.user.username)}`))
                                         console.log(chalk.green(`${chalk.bold(Wewber.user.username)} traded ${chalk.bold(WewberOffer).replaceAll('`', '')} to ${chalk.bold(Member.user.username)}`))
                                         embed.setColor('00FF00') 

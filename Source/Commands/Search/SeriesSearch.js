@@ -14,7 +14,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(embed)
     }
     else {
-        const SeriesSearch = await CharacterModel.aggregate([{ $search: { 'index': 'Search', 'text': { query: SeriesName, path: 'series' }}}]).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }});
+        const SeriesSearch = await CharacterModel.aggregate([{ $search: { 'index': 'Search', 'text': { query: SeriesName, path: 'Series.Title' }}}]).collation({ locale: 'en', strength: 2 }).sort({ score: { $meta: "textScore" }});
         
         if(!SeriesSearch[0]) {
             const embed = new MessageEmbed()
@@ -23,16 +23,16 @@ module.exports.run = async(bot, message, args) => {
             return message.channel.send(embed)
         }
 
-        const SeriesChar = await CharacterModel.find({ series: SeriesSearch[0].series }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
+        const SeriesChar = await CharacterModel.find({ 'Series.Title': SeriesSearch[0].Series.Title }).collation({ locale: 'en', strength: 2 }).sort({ Name: 1 });
         const CharPerPage = 20;
-        const CharacterList = SeriesChar.map((Character, index) => `${index + 1}). **${Character.name}**`)
+        const CharacterList = SeriesChar.map((Character, index) => `${index + 1}). **${Character.Name}**`)
         let page = 0;
         const previous = new MessageButton().setStyle('blurple').setLabel('Previous').setID('previous')
         const next = new MessageButton().setStyle('blurple').setLabel('Next').setID('next')
         const Pages = new MessageActionRow().addComponent(previous).addComponent(next);
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(SeriesSearch[0].series)
+            .setTitle(SeriesSearch[0].Series.Title)
             .setDescription(CharacterList.slice((page) * CharPerPage, CharPerPage).join('\n'))
             .setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
         let Send;
@@ -51,7 +51,7 @@ module.exports.run = async(bot, message, args) => {
                 if(page > Math.floor(CharacterList.length/CharPerPage)) { page = 0 }
 
                 embed.setColor('2f3136')
-                embed.setTitle(SeriesSearch[0].series)
+                embed.setTitle(SeriesSearch[0].Series.Title)
                 embed.setDescription(CharacterList.slice(page * CharPerPage, (page + 1) * CharPerPage).join('\n'))
                 embed.setFooter(`Page ${page + 1}/${Math.ceil(CharacterList.length/CharPerPage)} [${CharacterList.length} Characters]`)
                 button.defer();
@@ -62,14 +62,14 @@ module.exports.run = async(bot, message, args) => {
 
                 if(SeriesChar[I]) {
                     embed.setColor('2f3136')
-                    embed.setTitle(SeriesChar[I].name)
-                    embed.setURL(SeriesChar[I].charURL)
-                    embed.setDescription(`**Series**: ${SeriesChar[I].series}\n**Gender**: ${SeriesChar[I].gender}`)
-                    embed.setThumbnail(SeriesChar[I].image)
-                if(!SeriesChar[I].owner) {
+                    embed.setTitle(SeriesChar[I].Name)
+                    embed.setURL(SeriesChar[I].Url)
+                    embed.setDescription(`**Series**: ${SeriesChar[I].Series.Title}\n**Gender**: ${SeriesChar[I].Gender}`)
+                    embed.setThumbnail(SeriesChar[I].Image)
+                if(SeriesChar[I].Owner === 'null') {
                     embed.setFooter(`Is not claimed by anyone`)
                 } else {
-                    const owner = bot.users.cache.find(owner => owner.id === SeriesChar[I].owner)
+                    const owner = bot.users.cache.find(owner => owner.id === SeriesChar[I].Owner)
                     embed.setFooter(`Owned By ${owner.username}`, owner.avatarURL())
                 }
                     message.delete(); ButtonCollector.stop(); MessageCollector.stop();

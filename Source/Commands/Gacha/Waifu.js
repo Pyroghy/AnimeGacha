@@ -6,47 +6,47 @@ const chalk = require('chalk');
 
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
-    const Waifu = await CharacterModel.aggregate([{ $match: { owner: 'null', gender: 'Female' }}, { $sample: { size: 1 }}]);
+    const Waifu = await CharacterModel.aggregate([{ $match: { Owner: 'null', Gender: 'Female' }}, { $sample: { size: 1 }}]);
 
     if(!Waifu[0]) { return }
     if(!args.length) {
         const embed = new MessageEmbed()
-            .setTitle(Waifu[0].name)
+            .setTitle(Waifu[0].Name)
             .setColor('2f3136')
-            .setURL(Waifu[0].charURL)
-            .setDescription(`**Series**: ${Waifu[0].series}`) 
-            .setImage(Waifu[0].image)
-            .setFooter(`React with any emoji to claim ${Waifu[0].name}`)
+            .setURL(Waifu[0].Url)
+            .setDescription(`**Series**: ${Waifu[0].Series.Title}`) 
+            .setImage(Waifu[0].Image)
+            .setFooter(`React with any emoji to claim ${Waifu[0].Name}`)
         message.channel.send(embed).then(message => {
-            const filter = user => user.id === user.id;
-            const collector = message.createReactionCollector(filter, { max: 1, time: 30000});
+            const ReactionFilter = user => user.id === user.id;
+            const ReactionCollector = message.createReactionCollector(ReactionFilter, { max: 1, time: 30000});
 
-            collector.on('collect', async(reaction, user) => {
+            ReactionCollector.on('collect', async(reaction, user) => {
                 const cooldown = used.get(user.id);
                 
                 if(cooldown) {
                     const remaining = Duration(cooldown - Date.now());
                     message.channel.send(`<@!${user.id}>, You need to wait ${remaining} before claiming another character!`)
-                    collector.empty(); reaction.users.remove(user);
+                    ReactionCollector.empty(); reaction.users.remove(user);
                 }
                 else {
-                    const Claim = await CharacterModel.updateOne({ owner: 'null', id: Waifu[0].id }, { $set: { owner: user.id }});
+                    const Claim = await CharacterModel.updateOne({ Owner: 'null', Id: Waifu[0].Id }, { $set: { Owner: user.id }});
 
                     if(Claim.n === 1) {
                         message.edit(embed.setFooter(`Claimed by ${user.username}`, user.avatarURL()))
-                        console.log(chalk.green(`The character ${chalk.bold(Waifu[0].name)} was claimed by ${chalk.bold(user.username)}`));
+                        console.log(chalk.green(`The character ${chalk.bold(Waifu[0].Name)} was claimed by ${chalk.bold(user.username)}`));
                     } else {
-                        return message.channel.send(`There was a problem with claiming **${Waifu[0].name}**`)
+                        return message.channel.send(`There was a problem with claiming **${Waifu[0].Name}**`)
                     }
-                    collector.stop(); reaction.users.remove(user);
+                    ReactionCollector.stop(); reaction.users.remove(user);
                     used.set(user.id, Date.now() + 5000);
                 }
                 setTimeout(() => used.delete(user.id), 5000);
             });
-            collector.on('end', (collected, reason) => {
+            ReactionCollector.on('end', (collected, reason) => {
                 if(reason === 'time') {
-                    console.log(chalk.red(`The Character ${chalk.bold(Waifu[0].name)} was not claimed`))
-                    message.edit(embed.setFooter(`${Waifu[0].name} is now unclaimable`))
+                    console.log(chalk.red(`The Character ${chalk.bold(Waifu[0].Name)} was not claimed`))
+                    message.edit(embed.setFooter(`${Waifu[0].Name} is now unclaimable`))
                 }
             });
         });

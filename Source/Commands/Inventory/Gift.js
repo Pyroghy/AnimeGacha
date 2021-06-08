@@ -6,10 +6,10 @@ module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const member = message.mentions.members.first();
     const Name = args.slice(1).join(' ').split(', ');
-    const Character = await CharacterModel.find({ owner: message.member.id, name: Name }).collation({ locale: 'en', strength: 2 });
-    const CharacterList = Character.map((Character) => Character.name);
-    const Exists = await CharacterModel.find({ name: Name }).collation({ locale: 'en', strength: 2 });
-    const ExistsList = Exists.map((Character) => Character.name);
+    const Character = await CharacterModel.find({ Owner: message.member.id, Name: Name }).collation({ locale: 'en', strength: 2 });
+    const CharacterList = Character.map((Character) => Character.Name);
+    const Exists = await CharacterModel.find({ Name: Name }).collation({ locale: 'en', strength: 2 });
+    const ExistsList = Exists.map((Character) => Character.Name);
 
     if(!member) {
         const embed = new MessageEmbed()
@@ -50,11 +50,11 @@ module.exports.run = async(bot, message, args) => {
     else {
         const CharacterGift = CharacterList.join(', ').replace(/, ([^,]*)$/, '\` and \`$1');
 
-        Character.forEach(async(Char) => await CharacterModel.updateMany({ id: Char.id }, { $set: { owner: member.id }}))
+        Character.forEach(async(Char) => await CharacterModel.updateMany({ Id: Char.Id }, { $set: { Owner: member.id }}))
 
         const embed = new MessageEmbed()
             .setColor('00FF00')
-            .setDescription(`You have gifted \`${CharacterGift}\` to **${member.user.username}**`)
+            .setTitle(`You have gifted \`${CharacterGift}\` to **${member.user.username}**`)
         message.channel.send(embed)
         console.log(chalk.green(`${chalk.bold(message.member.user.username)} gifted ${chalk.bold(member.user.username)} the character(s) ${chalk.bold(CharacterGift).replaceAll('`', '')}`))
     }

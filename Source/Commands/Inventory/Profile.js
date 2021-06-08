@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 module.exports.run = async(bot, message, args) => {
     const CharacterModel = mongoose.model('Characters');
     const ProfileModel = mongoose.model('Profiles');
-    const member = message.mentions.members.first() || message.member;
-    const Waifus = await CharacterModel.aggregate([{ $match: { owner: member.id, gender: 'Female' }}]);
-    const Husbandos = await CharacterModel.aggregate([{ $match: { owner: member.id, gender: 'Male' }}]);
-    const Total = await CharacterModel.aggregate([{ $match: { owner: member.id }}]);
-    const User = await ProfileModel.findOne({ id: member.id });
+    const Member = message.mentions.members.first() || message.member;
+    const Waifus = await CharacterModel.aggregate([{ $match: { Owner: Member.id, Gender: 'Female' }}]);
+    const Husbandos = await CharacterModel.aggregate([{ $match: { Owner: Member.id, Gender: 'Male' }}]);
+    const Total = await CharacterModel.aggregate([{ $match: { Owner: Member.id }}]);
+    const User = await ProfileModel.findOne({ Id: Member.id });
 
-    if(args.length === 1 && args.join(' ') !== `<@!${member.id}>` || member.user.bot) {
+    if(args.length === 1 && args.join(' ') !== `<@!${Member.id}>` || Member.user.bot) {
         const embed = new MessageEmbed()
             .setColor('2f3136')
             .setTitle(`You specified an invalid user!`)
@@ -18,15 +18,15 @@ module.exports.run = async(bot, message, args) => {
     }
     if(!User) {
         ProfileModel.create({
-            id: member.id,
-            username: member.user.username,
-            image: member.user.avatarURL()
+            id: Member.id,
+            username: Member.user.username,
+            image: Member.user.avatarURL()
         })
         const embed = new MessageEmbed()
             .setColor('2f3136')
-            .setTitle(`${member.user.username}'s Profile`)
+            .setTitle(`${Member.user.username}'s Profile`)
             .setDescription(`**Husbandos Claimed**: \`${Husbandos.length}\`\n**Waifus Claimed**: \`${Waifus.length}\`\n**Total Claimed**: \`${Total.length}\``)
-            .setThumbnail(member.user.avatarURL())
+            .setThumbnail(Member.user.avatarURL())
         return message.channel.send(embed)
     }
     if(User) {
