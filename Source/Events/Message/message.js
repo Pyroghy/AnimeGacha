@@ -4,7 +4,7 @@ module.exports = async(bot, message) => {
     if(message.author.bot) { return }
 
     const ProfileModel = mongoose.model('Profiles');
-    const User = await ProfileModel.findOne({ id: message.member.id });
+    const User = await ProfileModel.findOne({ Id: message.member.id });
     const prefix = process.env.PREFIX;
     const args = message.content.slice(prefix.length).trim().split(' ');
     const commandName = args.shift().toLowerCase();
@@ -12,8 +12,8 @@ module.exports = async(bot, message) => {
  
     if(!User) {
         ProfileModel.create({
-            id: message.member.id,
-            username: message.member.user.username,
+            Id: message.member.id,
+            Username: message.member.user.username,
             Image: message.member.user.avatarURL()
         })
     }
