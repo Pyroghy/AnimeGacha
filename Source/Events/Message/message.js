@@ -14,7 +14,7 @@ module.exports = async(bot, message) => {
         ProfileModel.create({
             id: message.member.id,
             username: message.member.user.username,
-            image: message.member.user.avatarURL()
+            Image: message.member.user.avatarURL()
         })
     }
     if(message.channel.type === 'dm') { return }
