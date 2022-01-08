@@ -1,19 +1,18 @@
 {
   "name": "anime-gacha",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
-  "main": "./Source/index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node index.js"
   },
   "author": "Pyroghy",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.1",
-    "discord-buttons": "^3.0.1",
-    "discord.js": "^12.5.3",
-    "dotenv": "^9.0.2",
-    "humanize-duration": "^3.26.0",
-    "mongoose": "^5.12.9"
+    "discord.js": "^13.5.0",
+    "dotenv": "^10.0.0",
+    "humanize-duration": "^3.27.0",
+    "mongoose": "^5.12.13"
   }
 }
