@@ -1,16 +1,16 @@
-{ 
-    "Owner": "null", 
-    "Name": "Name of character", 
-    "Url": "Url to character", 
-    "Id": "Id of character",
-    "Gender": "Male or Female", 
-    "Series": { 
-        "Title": "Title of series",
-        "Type": "ANIME or MANGA or CUSTOM" 
-    }, 
-    "Image": "Link to character image", 
-    "Stats": { 
-        "Smash": 0, 
-        "Pass": 0 
-    }
+{
+    "owners": [
+        {
+            "guild": "guild id",
+            "owner": "null"
+        }
+    ],
+    "name": "Name of character",
+    "id": "Id of character",
+    "gender": "Gender of character",
+    "series": {
+        "title": "Title of series",
+        "type": "ANIME or MANGA or CUSTOM"
+    },
+    "image": "Link to character image"
 }
