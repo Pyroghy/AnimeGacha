@@ -11,7 +11,7 @@ module.exports = async(bot, message) => {
     const command = bot.commands.get(commandName) || bot.commands.get(bot.aliases.get(commandName));
 
     if(!message.content.startsWith(prefix) || message.author.bot) { return }
-    if(message.channel.type === 'dm') { return }
+    if(message.channel.type === 'DM') { return }
     if(!user) {
         await profileModel.create({ 
             id: member.id, 
