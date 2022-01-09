@@ -28,42 +28,34 @@ module.exports = {
                 .setTitle(`You need to specify a character to set to your profile!`)
             return message.channel.send({ embeds: [embed] })
         }
+        if(!character) {
+            const embed = new MessageEmbed()
+                .setColor('2f3136')
+                .setTitle(`🔍 You dont own \`${exists.name}\`!`)
+            return message.channel.send({ embeds: [embed] })
+        }
         if(!user) {
-            if(!character) {
-                const embed = new MessageEmbed()
-                    .setColor('2f3136')
-                    .setTitle(`🔍 You dont own \`${exists.name}\`!`)
-                return message.channel.send({ embeds: [embed] })
-            }
-            else {
-                profileModel.create({ 
-                    id: message.member.id, 
-                    guilds: [
-                        { 
-                            guild: message.guild.id, 
-                            character: "None set",
-                            color: "2f3136",
-                            image: message.member.user.avatarURL() 
-                        }
-                    ], 
-                    badges: [] 
-                })
-                const embed = new MessageEmbed()
-                    .setColor('2f3136')
-                    .setAuthor({ name: `${character.name} has been set to your profile!`, iconURL: character.image })
-                return message.channel.send({ embeds: [embed] })
-            }
+            profileModel.create({ 
+                id: message.member.id, 
+                guilds: [
+                    { 
+                        guild: message.guild.id, 
+                        character: "None set",
+                        color: "2f3136",
+                        image: message.member.user.avatarURL() 
+                    }
+                ], 
+                badges: [] 
+            })
+            const embed = new MessageEmbed()
+                .setColor('2f3136')
+                .setAuthor({ name: `${character.name} has been set to your profile!`, iconURL: character.image })
+            return message.channel.send({ embeds: [embed] })
         }
         if(!exists) {
             const embed = new MessageEmbed()
                 .setColor('2f3136')
                 .setTitle(`🔍 There is no character named \`${name}\`!`)
-            return message.channel.send({ embeds: [embed] })
-        }
-        if(!character) {
-            const embed = new MessageEmbed()
-                .setColor('2f3136')
-                .setTitle(`🔍 You dont own \`${exists.name}\`!`)
             return message.channel.send({ embeds: [embed] })
         }
         if(guildList[guildIndex].image === character.image) {
