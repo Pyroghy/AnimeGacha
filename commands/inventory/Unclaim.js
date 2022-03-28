@@ -9,26 +9,26 @@ module.exports = {
         description: "Unclaim a character.",
         category: "Inventory",
     },
-    run: async(bot, message, args) => {
+    run: async (bot, message, args) => {
         const characterModel = mongoose.model('Characters');
         const name = args.join(' ');
         const member = message.member;
         const exists = await characterModel.findOne({ name: name }).collation({ locale: 'en', strength: 2 });
-        const character = await characterModel.findOne({ owners: { guild: message.guild.id, owner: message.member.id }, name: name }).collation({ locale: 'en', strength: 2 });
+        const character = await characterModel.findOne({ [`owners.${message.guild.id}`]: message.member.id, name: name }).collation({ locale: 'en', strength: 2 });
 
-        if(!name) {
+        if (!name) {
             const embed = new MessageEmbed()
                 .setColor('EED202')
                 .setTitle(`You must specify the character you want to unclaim!`)
             return message.channel.send({ embeds: [embed] })
         }
-        if(!exists) {
+        if (!exists) {
             const embed = new MessageEmbed()
                 .setColor('2f3136')
                 .setTitle(`🔍 There is no character named \`${name}\`!`)
             return message.channel.send({ embeds: [embed] })
         }
-        if(!character) {
+        if (!character) {
             const embed = new MessageEmbed()
                 .setColor('2f3136')
                 .setTitle(`🔍 You dont own \`${exists.name}\`!`)
@@ -46,15 +46,15 @@ module.exports = {
             message.channel.send({ embeds: [embed], components: [options] }).then(message => {
                 const buttonFilter = button => button.clicker.user.id === member.id;
                 const buttonCollector = message.createMessageComponentCollector({ buttonFilter, max: 1, time: 120000 });
-            
-                buttonCollector.on('collect', async(button) => {
+
+                buttonCollector.on('collect', async (button) => {
                     button.deferUpdate();
                     const optionsDisabled = new MessageActionRow().addComponents(unclaim.setDisabled(), cancel.setDisabled());
-                    
-                    if(button.customId === 'unclaim') {
-                        const unclaim = await characterModel.updateOne({ 'owners.guild': message.guild.id, 'owners.owner': member.id, id: character.id }, { $set: { 'owners.$.owner': 'null' }});
 
-                        if(unclaim.n === 1) {
+                    if (button.customId === 'unclaim') {
+                        const unclaim = await characterModel.updateOne({ [`owners.${message.guild.id}`]: member.id, id: character.id }, { $set: { [`owners.${message.guild.id}`]: null } });
+
+                        if (unclaim.n === 1) {
                             embed.setTitle(`${character.name} was unclaimed`)
                             message.edit({ embeds: [embed], components: [optionsDisabled] })
                             console.log(chalk.red(`The character ${chalk.bold(character.name)} was unclaimed by ${chalk.bold(member.user.username)}`));
@@ -62,14 +62,14 @@ module.exports = {
                             return message.channel.send(`There was a problem with unclaiming **${character.name}**`)
                         }
                     }
-                    if(button.customId === 'cancel') {
+                    if (button.customId === 'cancel') {
                         embed.setTitle(`${character.name} was not unclaimed`)
                         message.edit({ embeds: [embed], components: [optionsDisabled] })
                     }
                 });
                 buttonCollector.on('end', (collected, reason) => {
                     console.log(chalk.green(`The character ${chalk.bold(character.name)} was not unclaimed`))
-                    if(reason === 'time') { message.delete() }
+                    if (reason === 'time') { message.delete() }
                 });
             });
         }
