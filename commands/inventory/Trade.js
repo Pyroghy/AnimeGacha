@@ -14,11 +14,9 @@ module.exports = {
         const member = message.member;
         const targetMember = message.mentions.members.first();
         const memberGive = args.slice(1).join(' ').split(/[ ,]+/);
-        const memberCharacterGive = await characterModel.find({ name: memberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 }); // finds all characters in the given args
+        const memberCharacterGive = await characterModel.find({ name: memberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
         const memberCharacterExistsList = memberCharacterGive.map(character => character.name);
-        const memberCharacterGiveList = memberCharacterGive.filter(character => { //owned list - returns all owned characters from args
-            if (character.owners[message.guild.id] === member.id) return character.name;
-        });
+        const memberCharacterGiveList = memberCharacterGive.map(character => character.owners[message.guild.id] === message.member.id ? character.name : false);
 
         if (!targetMember) {
             const embed = new MessageEmbed()
@@ -72,11 +70,9 @@ module.exports = {
                         const argz = message.content.slice(1).trim().split(' ');
                         if (message.content.startsWith('-t')) {
                             const targetMemberGive = argz.slice(1).join(' ').split(', ');
-                            const tMCharacterGive = await characterModel.find({ name: targetMemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 }); // finds all characters in the given args
+                            const tMCharacterGive = await characterModel.find({ name: targetMemberGive }).collation({ locale: 'en', strength: 2 }).sort({ name: 1 });
                             const tMCharacterExistsList = memberCharacterGive.map(character => character.name);
-                            const tMCharacterGiveList = memberCharacterGive.filter(character => { //owned list - returns all owned characters from args
-                                if (character.owners[message.guild.id] === targetMember.id) return character.name;
-                            });
+                            const tMCharacterGiveList = memberCharacterGive.map(character => character.owners[message.guild.id] === message.member.id ? character.name : false);
 
                             if (!argz.slice(1).join(' ')) {
                                 const embed = new MessageEmbed()

@@ -17,7 +17,6 @@ module.exports = {
         const husbando = await characterModel.aggregate([{ $match: { [`owners.${message.guild.id}`]: null, gender: 'Male' } }, { $sample: { size: 1 } }]);
 
         if (husbando[0] === undefined) return message.channel.send('There are no male claimable characters')
-
         if (!args.length) {
             const embed = new MessageEmbed()
                 .setTitle(husbando[0].name)
