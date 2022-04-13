@@ -13,5 +13,3 @@ module.exports = bot => {
         console.log(`Logged in as ${chalk.bold(bot.user.username)}`)
     });
 };
-
-module.exports.info = { name: 'ready' }
