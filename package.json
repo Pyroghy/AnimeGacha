@@ -7,7 +7,7 @@
     "test": "node index.js"
   },
   "author": "Pyroghy",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.1",
     "discord.js": "^13.5.0",
